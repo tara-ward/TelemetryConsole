@@ -1,0 +1,69 @@
+@using Microsoft.AspNetCore.Components
+@using TardisTelemetryConsole.Models
+
+<article class="tardis-card">
+    <header class="tardis-card-header d-flex justify-content-between align-items-center gap-2">
+        <div>
+            <div class="fw-semibold">@Subsystem.Name</div>
+            <small class="text-light-emphasis">@Subsystem.Description</small>
+        </div>
+        <span class="status-pill @GetStatusClass(Subsystem.Status)">
+            @Subsystem.Status
+        </span>
+    </header>
+
+    <div class="reading-grid">
+        @foreach (var reading in Subsystem.Readings)
+        {
+            <div class="reading-tile">
+                <div class="fw-semibold">@reading.Name</div>
+                <div>@reading.Value.ToString("0.0") @reading.Unit</div>
+            </div>
+        }
+    </div>
+
+    <div class="px-3 pb-3 d-flex justify-content-between align-items-center gap-2">
+        <span>Active Alerts: @GetActiveAlertCount()</span>
+        <button type="button" class="console-button" @onclick="HandleViewDetailsClick">
+            View Diagnostics
+        </button>
+    </div>
+</article>
+
+@code {
+    [Parameter]
+    public TardisSubsystem Subsystem { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<int> OnViewDetails { get; set; }
+
+    private Task HandleViewDetailsClick()
+    {
+        return OnViewDetails.InvokeAsync(Subsystem.Id);
+    }
+
+    private int GetActiveAlertCount()
+    {
+        return Subsystem.Alerts.Count(alert => !alert.IsAcknowledged);
+    }
+
+    private static string GetStatusClass(string status)
+    {
+        if (string.IsNullOrWhiteSpace(status))
+        {
+            return "status-stable";
+        }
+
+        if (status.Contains("critical", StringComparison.OrdinalIgnoreCase))
+        {
+            return "status-critical";
+        }
+
+        if (status.Contains("warning", StringComparison.OrdinalIgnoreCase))
+        {
+            return "status-warning";
+        }
+
+        return "status-stable";
+    }
+}

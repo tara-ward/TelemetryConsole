@@ -1,0 +1,484 @@
+@page "/project-notes"
+
+<PageTitle>Project Notes</PageTitle>
+
+<div class="tardis-page">
+
+    <section class="tardis-header">
+    <h1>Project Notes</h1>
+    <p>
+        A full overview of what was built in the TARDIS Telemetry Console project,
+        what it demonstrates, and how it relates to an IoT Programmer role.
+    </p>
+    <p>
+        I made these notes to keep track of the project structure, features, and documentation references.
+    </p>
+    <p>
+        These are mainly for me for learning purposes, but showcase the thought process and structure of the project in case anyone else finds them useful.
+    </p>
+</section>
+
+ <section class="alert-panel">
+    <h2>Relevant Documentation References</h2>
+    <p>
+        These are official Microsoft documentation resources that relate directly to the structure and features used in this project.
+    </p>
+    <p> 
+        These are what I used to build the project.
+    </p>
+
+    <ul>
+        <li>
+            <strong>ASP.NET Core Blazor overview:</strong>
+            Explains Blazor as a .NET web framework for building interactive web UI with C#, HTML, and CSS.
+            <br />
+            <a href="https://learn.microsoft.com/en-us/aspnet/core/blazor/" target="_blank">
+                Microsoft Blazor documentation
+            </a>
+        </li>
+
+        <li>
+            <strong>Blazor project structure:</strong>
+            Relevant because this project uses the modern Blazor structure with files such as
+            <code>Components/App.razor</code>, <code>Components/Routes.razor</code>, and
+            <code>Components/Pages</code>.
+            <br />
+            <a href="https://learn.microsoft.com/en-us/aspnet/core/blazor/project-structure" target="_blank">
+                Blazor project structure documentation
+            </a>
+        </li>
+
+        <li>
+            <strong>Razor components:</strong>
+            Relevant because this project uses reusable Razor components, including the subsystem card component.
+            <br />
+            <a href="https://learn.microsoft.com/en-us/aspnet/core/blazor/components/" target="_blank">
+                Razor components documentation
+            </a>
+        </li>
+
+        <li>
+            <strong>ASP.NET Core dependency injection:</strong>
+            Relevant because the project registers and injects <code>TelemetryService</code> so pages and components can access mock telemetry data.
+            <br />
+            <a href="https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection" target="_blank">
+                Dependency injection documentation
+            </a>
+        </li>
+
+        <li>
+            <strong>ASP.NET Core fundamentals:</strong>
+            Useful for understanding the broader .NET web application concepts behind the project, including app configuration, middleware, services, and dependency injection.
+            <br />
+            <a href="https://learn.microsoft.com/en-us/aspnet/core/fundamentals/" target="_blank">
+                ASP.NET Core fundamentals documentation
+            </a>
+        </li>
+
+        <li>
+            <strong>.NET 9 overview:</strong>
+            Relevant because this project was built using the installed .NET 9 SDK.
+            <br />
+            <a href="https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-9/overview" target="_blank">
+                What's new in .NET 9
+            </a>
+        </li>
+
+        <li>
+            <strong>Blazor with Entity Framework Core:</strong>
+            Relevant as a possible future improvement if local database storage is added for settings, alert history, or saved telemetry.
+            <br />
+            <a href="https://learn.microsoft.com/en-us/aspnet/core/blazor/blazor-ef-core" target="_blank">
+                Blazor with EF Core documentation
+            </a>
+        </li>
+
+        <li>
+            <strong>EF Core DbContext configuration:</strong>
+            Relevant for future SQLite or SQL Server support. It explains database context setup and lifetime management, including patterns useful in Blazor apps.
+            <br />
+            <a href="https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/" target="_blank">
+                EF Core DbContext configuration documentation
+            </a>
+        </li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Project Purpose</h2>
+    <ul>
+        <li>Built a small Blazor/.NET demo project for an IoT Programmer interview.</li>
+        <li>The app is themed around the TARDIS from Doctor Who.</li>
+        <li>The actual structure is based on an industrial IoT monitoring dashboard.</li>
+        <li>It simulates equipment and sensor telemetry, evaluates readings, and displays system status and alerts.</li>
+        <li>The goal was to demonstrate Blazor fundamentals, C#/.NET skills, component-based UI, routing, services, dependency injection, and dashboard-style data visualization.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Initial Setup</h2>
+    <ul>
+        <li>Checked installed .NET versions using <code>dotnet --info</code>.</li>
+        <li>Confirmed Blazor templates were available using <code>dotnet new list blazor</code>.</li>
+        <li>Created a new Blazor project using <code>dotnet new blazor -n TardisTelemetryConsole</code>.</li>
+        <li>Entered the project folder using <code>cd TardisTelemetryConsole</code>.</li>
+        <li>Ran the starter app using <code>dotnet run</code>.</li>
+        <li>Confirmed the app launched locally at <code>http://localhost:5284</code>.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Project Structure Confirmed</h2>
+    <ul>
+        <li>Confirmed the newer Blazor structure was being used.</li>
+        <li>Routeable pages are located in <code>Components/Pages</code>.</li>
+        <li>The app file is located at <code>Components/App.razor</code>.</li>
+        <li>The routes file is located at <code>Components/Routes.razor</code>.</li>
+        <li>The main CSS file is located at <code>wwwroot/app.css</code>.</li>
+        <li><code>Program.cs</code> is located at the project root.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Models Added</h2>
+    <ul>
+        <li>Created a <code>Models</code> folder.</li>
+        <li>Added the <code>TardisSubsystem</code> model.</li>
+        <li>Added the <code>SensorReading</code> model.</li>
+        <li>Added the <code>SystemAlert</code> model.</li>
+        <li>Used nullable-safe C#.</li>
+        <li>Initialized strings and lists to avoid nullable warnings.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>TardisSubsystem Model Purpose</h2>
+    <p>Represents one monitored TARDIS system.</p>
+    <ul>
+        <li><code>Id</code></li>
+        <li><code>Name</code></li>
+        <li><code>Description</code></li>
+        <li><code>Status</code></li>
+        <li><code>Readings</code></li>
+        <li><code>Alerts</code></li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>SensorReading Model Purpose</h2>
+    <p>Represents one simulated sensor value.</p>
+    <ul>
+        <li><code>Name</code></li>
+        <li><code>Value</code></li>
+        <li><code>Unit</code></li>
+        <li><code>WarningThreshold</code></li>
+        <li><code>CriticalThreshold</code></li>
+        <li><code>LastUpdated</code></li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>SystemAlert Model Purpose</h2>
+    <p>Represents an alert generated from telemetry readings.</p>
+    <ul>
+        <li><code>Id</code></li>
+        <li><code>SubsystemId</code></li>
+        <li><code>SubsystemName</code></li>
+        <li><code>Message</code></li>
+        <li><code>Severity</code></li>
+        <li><code>CreatedAt</code></li>
+        <li><code>IsAcknowledged</code></li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Telemetry Service Added</h2>
+    <ul>
+        <li>Created a <code>Services</code> folder.</li>
+        <li>Added <code>TelemetryService</code>.</li>
+        <li>Registered <code>TelemetryService</code> in <code>Program.cs</code> using dependency injection.</li>
+        <li>Used singleton registration so the same mock telemetry data stays available while the app is running.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>TelemetryService Purpose</h2>
+    <ul>
+        <li>Acts as the mock IoT data source.</li>
+        <li>Holds a list of TARDIS subsystems.</li>
+        <li>Generates and updates simulated telemetry readings.</li>
+        <li>Creates warning and critical alerts based on thresholds.</li>
+        <li>Provides subsystem and alert data to the Blazor pages.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>TelemetryService Methods Added</h2>
+    <ul>
+        <li><code>GetSubsystems()</code></li>
+        <li><code>GetSubsystemById(int id)</code></li>
+        <li><code>GetActiveAlerts()</code></li>
+        <li><code>SimulateTelemetryUpdate()</code></li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Mock TARDIS Subsystems Added</h2>
+    <ul>
+        <li>Time Rotor Stability</li>
+        <li>Artron Energy Core</li>
+        <li>Chameleon Circuit</li>
+        <li>Life Support Matrix</li>
+        <li>Navigation Matrix</li>
+        <li>Exterior Shell Integrity</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Telemetry Logic Added</h2>
+    <ul>
+        <li>Each subsystem has simulated readings.</li>
+        <li>Each reading has a value, unit, warning threshold, and critical threshold.</li>
+        <li><code>SimulateTelemetryUpdate</code> randomly changes the readings.</li>
+        <li>The app checks readings against thresholds.</li>
+        <li>If a value is normal, the system status is Stable.</li>
+        <li>If a value reaches the warning threshold, the system status becomes Warning.</li>
+        <li>If a value reaches the critical threshold, the system status becomes Critical.</li>
+        <li>Warning alerts are generated for warning-level readings.</li>
+        <li>Critical alerts are generated for critical-level readings.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>TARDIS-Inspired CSS Added</h2>
+    <ul>
+        <li>Updated the app styling to use a TARDIS/sci-fi console theme.</li>
+        <li>Used dark navy backgrounds.</li>
+        <li>Used cyan borders and glow effects.</li>
+        <li>Added rounded dashboard cards.</li>
+        <li>Added readable text styling.</li>
+        <li>Added responsive grid layout.</li>
+        <li>Added status colours for Stable, Warning, and Critical.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>CSS Classes Added or Used</h2>
+    <ul>
+        <li><code>tardis-page</code></li>
+        <li><code>tardis-header</code></li>
+        <li><code>tardis-grid</code></li>
+        <li><code>tardis-card</code></li>
+        <li><code>tardis-card-header</code></li>
+        <li><code>reading-grid</code></li>
+        <li><code>reading-tile</code></li>
+        <li><code>status-pill</code></li>
+        <li><code>status-stable</code></li>
+        <li><code>status-warning</code></li>
+        <li><code>status-critical</code></li>
+        <li><code>alert-panel</code></li>
+        <li><code>alert-item</code></li>
+        <li><code>console-button</code></li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Reusable Component Added</h2>
+    <ul>
+        <li>Created <code>SystemCard.razor</code>.</li>
+        <li>Placed it in <code>Components/Tardis</code>.</li>
+        <li>Made it accept a <code>TardisSubsystem</code> parameter.</li>
+        <li>Made it accept an <code>OnViewDetails</code> callback.</li>
+        <li>Displays subsystem name.</li>
+        <li>Displays subsystem description.</li>
+        <li>Displays status pill.</li>
+        <li>Displays sensor readings.</li>
+        <li>Displays alert count.</li>
+        <li>Displays View Diagnostics button.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Dashboard Page Updated</h2>
+    <ul>
+        <li>Updated <code>Components/Pages/Home.razor</code>.</li>
+        <li>Used route <code>"/"</code>.</li>
+        <li>Injected <code>TelemetryService</code>.</li>
+        <li>Injected <code>NavigationManager</code>.</li>
+        <li>Added the main page title: <strong>TARDIS Telemetry Console</strong>.</li>
+        <li>Added subtitle: <strong>Simulated IoT-style systems monitoring dashboard</strong>.</li>
+        <li>Added Simulate Telemetry button.</li>
+        <li>Added responsive dashboard grid.</li>
+        <li>Displayed <code>SystemCard</code> components for each subsystem.</li>
+        <li>Added Cloister Bell Alerts panel.</li>
+        <li>Added active alert display.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Simulate Telemetry Button</h2>
+    <ul>
+        <li>Added a button on the dashboard.</li>
+        <li>Button calls <code>TelemetryService.SimulateTelemetryUpdate()</code>.</li>
+        <li>Button refreshes subsystem data.</li>
+        <li>Button refreshes active alerts.</li>
+        <li>Button updates the UI immediately.</li>
+        <li>Used this to simulate changing IoT telemetry data.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>View Diagnostics Button</h2>
+    <ul>
+        <li>Added View Diagnostics button on each subsystem card.</li>
+        <li>Button navigates to <code>/systems/{id}</code>.</li>
+        <li>Used <code>NavigationManager</code> to route to the selected subsystem details page.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Diagnostics Page Added</h2>
+    <ul>
+        <li>Created routeable page <code>/systems/{id:int}</code>.</li>
+        <li>Page shows details for one subsystem.</li>
+        <li>Displays subsystem name.</li>
+        <li>Displays subsystem description.</li>
+        <li>Displays status.</li>
+        <li>Displays current readings.</li>
+        <li>Displays related alerts.</li>
+        <li>Added friendly not-found message if subsystem does not exist.</li>
+        <li>Added Back to Dashboard button.</li>
+        <li>Fixed Back to Dashboard so it returns to route <code>"/"</code>.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Alerts Page Added</h2>
+    <ul>
+        <li>Created routeable page <code>/alerts</code>.</li>
+        <li>Injected <code>TelemetryService</code>.</li>
+        <li>Displays active alerts.</li>
+        <li>Shows severity.</li>
+        <li>Shows subsystem name.</li>
+        <li>Shows alert message.</li>
+        <li>Shows created time.</li>
+        <li>Displays friendly message if there are no active alerts.</li>
+        <li>Removed the Simulate Telemetry button from the Alerts page because simulation belongs on the dashboard.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Navigation Updated</h2>
+    <ul>
+        <li>Updated the default Blazor navigation.</li>
+        <li>Added Dashboard nav link.</li>
+        <li>Added Alerts nav link.</li>
+        <li>Kept routing simple.</li>
+        <li>Restyled navigation to match the TARDIS theme.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Default Blazor Theme Updated</h2>
+    <ul>
+        <li>Restyled the default Blazor layout/navigation.</li>
+        <li>Removed or overrode the default template look.</li>
+        <li>Changed sidebar/nav styling to dark navy.</li>
+        <li>Added cyan TARDIS-style accents.</li>
+        <li>Styled active nav links like selected console buttons.</li>
+        <li>Kept navigation readable and functional.</li>
+        <li>Removed duplicate app branding/title above the nav bar.</li>
+        <li>Kept the main dashboard title inside <code>Home.razor</code>.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Critical Status Added</h2>
+    <ul>
+        <li>Added support for Critical status.</li>
+        <li>Critical appears when any reading reaches or exceeds its critical threshold.</li>
+        <li>Critical status uses red styling.</li>
+        <li>Warning uses yellow styling.</li>
+        <li>Stable uses green/blue styling.</li>
+        <li>Critical alerts show as red/critical in the UI.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Testing Done</h2>
+    <ul>
+        <li>Ran <code>dotnet build</code>.</li>
+        <li>Confirmed the project builds successfully.</li>
+        <li>Ran <code>dotnet run</code>.</li>
+        <li>Opened the app locally.</li>
+        <li>Confirmed the dashboard loads.</li>
+        <li>Confirmed the TARDIS theme displays.</li>
+        <li>Confirmed Simulate Telemetry updates values.</li>
+        <li>Confirmed warning and critical statuses can appear.</li>
+        <li>Confirmed View Diagnostics opens subsystem details.</li>
+        <li>Confirmed Back to Dashboard works.</li>
+        <li>Confirmed Alerts page displays alerts.</li>
+        <li>Confirmed navigation links work.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>What the App Demonstrates</h2>
+    <ul>
+        <li>Blazor fundamentals.</li>
+        <li>.NET/C# project setup.</li>
+        <li>Razor components.</li>
+        <li>Component parameters.</li>
+        <li>Event callbacks.</li>
+        <li>Routing.</li>
+        <li><code>NavigationManager</code>.</li>
+        <li>Dependency injection.</li>
+        <li>Service layer architecture.</li>
+        <li>C# models.</li>
+        <li>Mock telemetry data.</li>
+        <li>Conditional alert logic.</li>
+        <li>Dashboard-style UI.</li>
+        <li>Responsive CSS.</li>
+        <li>User-facing data visualization.</li>
+        <li>Debugging and iterative development.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>How to Explain The App</h2>
+    <ul>
+        <li>I built a small Blazor/.NET project called TARDIS Telemetry Console.</li>
+        <li>It is themed after Doctor Who, but the structure is based on an industrial IoT dashboard.</li>
+        <li>It uses C# models, Razor components, dependency injection, routing, and a mock telemetry service.</li>
+        <li>Each TARDIS subsystem acts like a connected machine or device.</li>
+        <li>The service generates simulated readings.</li>
+        <li>The app checks those readings against warning and critical thresholds.</li>
+        <li>The UI displays system status, sensor values, and active alerts.</li>
+        <li>The Simulate Telemetry button mimics new sensor data coming in.</li>
+        <li>The View Diagnostics page shows more detail for each subsystem.</li>
+        <li>If I continued the project, I would add SQLite for saved settings and alert history.</li>
+        <li>After that, I would replace the mock data with MQTT, OPC UA, REST API, database, or middleware-driven telemetry.</li>
+    </ul>
+</section>
+
+<section class="alert-panel">
+    <h2>Future Improvements</h2>
+    <p> Of course, some of these improvements/additions would be on a real system and not on something fictitious like a TARDIS module.</p>
+    <ul>
+        <li>Add SQLite for saved settings.</li>
+        <li>Add alert history.</li>
+        <li>Add saved user preferences.</li>
+        <li>Add charts for telemetry trends.</li>
+        <li>Add authentication.</li>
+        <li>Add real-time updates with SignalR.</li>
+        <li>Add REST API integration.</li>
+        <li>Add MQTT integration.</li>
+        <li>Add OPC UA integration.</li>
+        <li>Add SQL Server or production database support.</li>
+        <li>Add real hardware or sensor data.</li>
+        <li>Add unit tests.</li>
+        <li>Add logging.</li>
+        <li>Add exportable reports.</li>
+    </ul>
+</section>
+</div>

@@ -1,0 +1,84 @@
+@page "/alerts"
+@using TardisTelemetryConsole.Models
+@using TardisTelemetryConsole.Services
+@inject TelemetryService TelemetryService
+
+<PageTitle>Active Alerts</PageTitle>
+
+<section class="tardis-page">
+    <header class="tardis-header">
+        <h1 class="mb-1">Cloister Bell Alerts</h1>
+        <p class="mb-3">Live active alerts from the simulated TARDIS subsystem network.</p>
+    </header>
+
+    <section class="alert-panel">
+        @if (_alerts.Count == 0)
+        {
+            <div class="alert-item">
+                No active alerts at this time. All monitored subsystems are currently stable.
+            </div>
+        }
+        else
+        {
+            @foreach (var alert in _alerts)
+            {
+                <div class="alert-item @GetAlertClass(alert.Severity)">
+                    <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+                        <div>
+                            <span class="status-pill @GetSeverityClass(alert.Severity)">
+                                @alert.Severity
+                            </span>
+                            <strong class="ms-2">@alert.SubsystemName</strong>
+                        </div>
+                        <small>@alert.CreatedAt.ToLocalTime().ToString("g")</small>
+                    </div>
+                    <div class="mt-2">@alert.Message</div>
+                </div>
+            }
+        }
+    </section>
+</section>
+
+@code {
+    private List<SystemAlert> _alerts = [];
+
+    protected override void OnInitialized()
+    {
+        RefreshAlerts();
+    }
+
+    private void RefreshAlerts()
+    {
+        _alerts = TelemetryService.GetActiveAlerts();
+    }
+
+    private static string GetSeverityClass(string severity)
+    {
+        if (severity.Equals("Critical", StringComparison.OrdinalIgnoreCase))
+        {
+            return "status-critical";
+        }
+
+        if (severity.Equals("Warning", StringComparison.OrdinalIgnoreCase))
+        {
+            return "status-warning";
+        }
+
+        return "status-stable";
+    }
+
+    private static string GetAlertClass(string severity)
+    {
+        if (severity.Equals("Critical", StringComparison.OrdinalIgnoreCase))
+        {
+            return "alert-item-critical";
+        }
+
+        if (severity.Equals("Warning", StringComparison.OrdinalIgnoreCase))
+        {
+            return "alert-item-warning";
+        }
+
+        return string.Empty;
+    }
+}

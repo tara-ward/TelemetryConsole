@@ -1,0 +1,90 @@
+﻿@page "/"
+@using TardisTelemetryConsole.Components.Shared
+@using TardisTelemetryConsole.Models
+@using TardisTelemetryConsole.Services
+@inject TelemetryService TelemetryService
+@inject NavigationManager NavigationManager
+
+<PageTitle>TARDIS Telemetry Console</PageTitle>
+
+<section class="tardis-page">
+    <header class="tardis-header">
+        <h1 class="mb-1">TARDIS Telemetry Console</h1>
+        <p class="mb-3">
+            A simulated IoT-style systems monitor for core TARDIS subsystems and alerts.
+        </p>
+        <button type="button" class="console-button" @onclick="SimulateTelemetry">
+            Simulate Telemetry
+        </button>
+    </header>
+
+    <div class="tardis-grid mb-3">
+        @foreach (var subsystem in _subsystems)
+        {
+            <SystemCard Subsystem="subsystem" OnViewDetails="HandleViewDetails" />
+        }
+    </div>
+
+    <section class="alert-panel">
+        <h2 class="h5 mb-3">Cloister Bell Alerts</h2>
+
+        @if (_alerts.Count == 0)
+        {
+            <div class="alert-item">
+                All monitored systems are currently stable.
+            </div>
+        }
+        else
+        {
+            @foreach (var alert in _alerts)
+            {
+                <div class="alert-item @GetAlertClass(alert.Severity)">
+                    <strong>@alert.Severity</strong> - @alert.SubsystemName: @alert.Message
+                </div>
+            }
+        }
+    </section>
+</section>
+
+@code {
+    private List<TardisSubsystem> _subsystems = [];
+    private List<SystemAlert> _alerts = [];
+
+    protected override void OnInitialized()
+    {
+        RefreshTelemetryData();
+    }
+
+    private async Task SimulateTelemetry()
+    {
+        TelemetryService.SimulateTelemetryUpdate();
+        RefreshTelemetryData();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleViewDetails(int subsystemId)
+    {
+        NavigationManager.NavigateTo($"/systems/{subsystemId}");
+    }
+
+    private void RefreshTelemetryData()
+    {
+        _subsystems = TelemetryService.GetSubsystems();
+        _alerts = TelemetryService.GetActiveAlerts();
+    }
+
+    private static string GetAlertClass(string severity)
+    {
+        if (severity.Equals("Critical", StringComparison.OrdinalIgnoreCase))
+        {
+            return "alert-item-critical";
+        }
+
+        if (severity.Equals("Warning", StringComparison.OrdinalIgnoreCase))
+        {
+            return "alert-item-warning";
+        }
+
+        return string.Empty;
+    }
+}
