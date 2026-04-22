@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "dotnet publish TardisTelemetryConsole.csproj -c Release -o publish",
+  "buildCommand": "curl -fsSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && bash dotnet-install.sh --channel 9.0 --install-dir ./.dotnet && ./.dotnet/dotnet publish TardisTelemetryConsole.csproj -c Release -o publish",
   "outputDirectory": "publish/wwwroot",
   "rewrites": [
     {
